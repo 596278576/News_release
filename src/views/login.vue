@@ -15,12 +15,14 @@
         <el-form-item prop="password" label="密码">
           <el-input v-model="ruleForm.password"></el-input>
         </el-form-item>
+        <el-button type="primary" plain @click="dengl">登录</el-button>
       </el-form>
     </div>
   </div>
 </template>
 
 <script>
+import { login } from "@/apis/user.js";
 export default {
   data() {
     return {
@@ -39,6 +41,24 @@ export default {
         ]
       }
     };
+  },
+  methods: {
+    dengl() {
+      this.$refs.ruleForm.validate(async value => {
+        if (value) {
+          let res = await login(this.ruleForm);
+          // console.log(res);
+          this.$message(res.data.message)
+          if(res.data.message==='登录成功'){
+              localStorage.setItem('token',res.data.data.token)
+              this.$router.push({name:'index'})
+          }
+        }else{
+          this.$message.warning('数据格式输入不正确')
+          return false
+        }
+      });
+    }
   }
 };
 </script>
